@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /api/parse/:
+    post:
+      operationId: api_parse_create
+      description: Запускает парсинг товаров с Wildberries по заданному запросу.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                query: телефон
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Парсинг запущен
+                examples:
+                  application/json:
+                    status: success
+                    query: телефон
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Неверный запрос
+                examples:
+                  application/json:
+                    query:
+                    - Это поле обязательно.
+          description: ''
+  /api/products/:
+    get:
+      operationId: api_products_retrieve
+      description: Возвращает список товаров с возможностью фильтрации.
+      parameters:
+      - in: query
+        name: min_price
+        schema:
+          type: number
+          format: double
+        description: Минимальная цена товара
+        examples:
+          Пример1:
+            value: 5000
+            summary: Пример 1
+          Пример2:
+            value: 10000
+            summary: Пример 2
+      - in: query
+        name: min_rating
+        schema:
+          type: number
+          format: double
+        description: Минимальный рейтинг товара (от 1 до 5)
+        examples:
+          Пример:
+            value: 4.0
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Список товаров
+                examples:
+                  application/json:
+                  - name: Смартфон Xiaomi
+                    price: 19999.0
+                    sale_price: 17999.0
+                    rating: 4.5
+                    feedbacks: 120
+          description: ''
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
