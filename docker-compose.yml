@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./project:/app/project
+      - ./requirements.txt:/app/requirements.txt
+    environment:
+      # Django DB settings через env
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: '5432'
+      # Опционально, если нужно Django DEBUG
+      DEBUG: '1'
+    depends_on:
+      - db
+    ports:
+      - '8000:8000'
+
+  frontend:
+    build:
+      context: ./wb-frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./wb-frontend:/usr/src/app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

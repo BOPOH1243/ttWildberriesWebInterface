@@ -45,7 +45,7 @@ def start_parsing(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     query = serializer.validated_data['query']
-    parse_wildberries(query)  # Вызываем парсер
+    parse_wildberries(query)
     return Response({"status": "success", "query": query})
 
 @extend_schema(
